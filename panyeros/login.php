@@ -3,9 +3,9 @@ session_start();
 
 // Database configuration (update with your credentials)
 define('DB_HOST', 'localhost');
-define('DB_USER', 'your_username');
-define('DB_PASS', 'your_password');
-define('DB_NAME', 'panyeros_db');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'panyeros');
 
 // Initialize variables
 $error = '';
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
             // Prepare and execute query
-            $stmt = $conn->prepare("SELECT id, email, password, name FROM users WHERE email = :email AND active = 1");
+            $stmt = $conn->prepare("SELECT id, email, password, name, is_admin FROM users WHERE email = :email AND active = 1");
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             
@@ -42,9 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                     $_SESSION['user_email'] = $user['email'];
                     $_SESSION['user_name'] = $user['name'];
                     $_SESSION['logged_in'] = true;
+                    $_SESSION['is_admin'] = $user['is_admin'];
                     
                     // Redirect to dashboard
-                    header('Location: dashboard.php');
+                    header('Location: home.php');
                     exit();
                 } else {
                     $error = 'Invalid email or password';
