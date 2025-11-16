@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panyeros Kusina | Our Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="services.css" />
+</head>
+<body>
+   <a href="index.html" class="back-home" title="Return to homepage">← Home</a>
+  <main class="container">
+    <header class="page-header">
+      <h1>Experience Panyeros Kusina</h1>
+      <p class="intro-text">
+        Every bite tells a story of tradition, warmth, and passion. Explore our service offerings crafted just for you.
+      </p>
+    </header>
+
+    <section class="services-grid">
+      <!-- Dine-In Card -->
+      <div class="service-card flip-card reveal">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <img src="https://64.media.tumblr.com/b85b301b8ee20ef1e13d67351ec91913/f070f46531a68688-6c/s2048x3072/ce188cf6bd3e53c4b0b0a18f0c09473feda4e77b.jpg" alt="Dine-In at Panyeros Kusina" />
+            <div class="card-title">Dine-In</div>
+          </div>
+          <div class="flip-back">
+            <p>Step into our cozy space where every meal is a warm gathering. Relish authentic flavors in a family atmosphere.</p>
+            <a href="dine-in.html" target="_blank" rel="noopener noreferrer" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Take-Out Card -->
+      <div class="service-card flip-card reveal">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <img src="https://64.media.tumblr.com/1bcf1c754d3635086e640d0c3aa09c85/44553ee44d5211f1-42/s540x810/bc177781f3077bacb6fa19cf834d883063635dba.jpg" alt="Take-out & Delivery" />
+            <div class="card-title">Take Out</div>
+          </div>
+          <div class="flip-back">
+            <p>Busy schedule? Enjoy fresh, delicious meals delivered fast to your doorstep. Convenience without losing quality.</p>
+            <a href="takeout.html" target="_blank" rel="noopener noreferrer" class="btn">Order Now</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Catering Card -->
+      <div class="service-card flip-card reveal">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <img src="https://64.media.tumblr.com/fc503dd45e7539c63cf2bf3513281f9c/bbd6f96767fde81f-bb/s2048x3072/8947fe666adea0dfc483790e0aa0de6598b6a169.jpg" alt="Catering Service" />
+            <div class="card-title">Catering</div>
+          </div>
+          <div class="flip-back">
+            <p>Make your events memorable with elegant and flavorful catering options tailored to your needs.</p>
+            <a href="catering.html" target="_blank" rel="noopener noreferrer" class="btn">Get Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <br><br><br>
+  <!-- Footer -->
+<footer style="background: #b68b32; color: #fffaf0; text-align: center; padding: 1rem 0; font-weight: 600;">
+  &copy; 2025 Panyeros Kusina. All rights reserved.
+</footer>
+
+  <script>
+    // Scroll reveal with fade + slide-up
+    const reveals = document.querySelectorAll('.reveal');
+    function revealOnScroll() {
+      const trigger = window.innerHeight * 0.85;
+      reveals.forEach(card => {
+        const top = card.getBoundingClientRect().top;
+        if (top < trigger) {
+          card.classList.add('active');
+        }
+      });
+    }
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+  </script>
+  
+</body>
+</html>

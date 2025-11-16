@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panyeros Kusina | Vision & Mission</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="mission.css" />
+</head>
+<body>
+    <a href="index.html" class="back-home" title="Return to homepage">← Home</a>
+  <main class="container">
+    <header class="page-header">
+      <h1>Mission & Vision</h1>
+      <p class="intro-text">
+        To celebrate Filipino meals through authentic flavors, heartfelt service, and world‑class presentation.
+      </p>
+    </header>
+
+    <section class="info-section reveal">
+      <h2 class="section-title">Vision</h2>
+      <p class="section-description">
+        To be a trusted symbol of Filipino culinary heritage — where authenticity meets simplicity and every meal connects hearts.
+      </p>
+    </section>
+
+    <section class="info-section reveal">
+      <h2 class="section-title">Mission</h2>
+      <p class="section-description">
+        Deliver genuine Filipino flavors with care, passion, and respect, creating moments that bring people together.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    function revealOnScroll() {
+      const trigger = window.innerHeight * 0.85;
+      reveals.forEach(section => {
+        const top = section.getBoundingClientRect().top;
+        if (top < trigger) section.classList.add('active');
+      });
+    }
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+  </script>
+</body>
+</html>

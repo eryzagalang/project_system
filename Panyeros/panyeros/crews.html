@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meet Our Crew | Panyeros Kusina</title>
+  <link rel="stylesheet" href="crews.css" />
+</head>
+<body>
+     <a href="index.html" class="back-home" title="Return to homepage">← Home</a>
+<header class="crew-header">
+  <div class="overlay">
+    <div class="header-content">
+      <h1 class="fade-up">Meet Our Crew</h1>
+      <p class="fade-up delay">The heart of <strong>Panyeros Kusina</strong> — where passion, hospitality, and Filipino flavor come together.</p>
+    </div>
+  </div>
+</header>
+
+
+
+  <!-- Highlighted Crew Quote -->
+  <section class="highlighted-review reveal">
+    “Sa bawat lutong bahay, may kwento ng samahan. We cook not just for customers, but for our growing family.”
+    <br><br><strong>— Chef Tony</strong>
+  </section>
+
+  <!-- Crew Grid -->
+  <section id="crew" class="section reveal">
+    <h2>Our Heart & Hustle</h2>
+    <div class="crew-container">
+
+      <div class="review-card">
+        <img src="https://64.media.tumblr.com/671a4810e13929f3a68a457be37719e4/17481cc9dbbd1145-2a/s400x600/bccd633c86d4ab77fb4c230ea1c61b83c05eb14a.jpg" alt="Chef Tony">
+        <blockquote>
+          “Master of the wok and heart of the kitchen. Every flame tells a flavor story.”
+        </blockquote>
+        <div class="stars">★★★★★</div>
+        <span>— Chef Tony, Head Cook</span>
+      </div>
+
+      <div class="review-card">
+        <img src="https://64.media.tumblr.com/ddf5c63baeed97a020f55ebe0f93379e/17481cc9dbbd1145-da/s400x600/ccf581d0020ea70611c31ef762139cd75b4e79bc.jpg" alt="Joy">
+        <blockquote>
+          “A taste of home, a place of joy — that's the Panyeros promise.”
+        </blockquote>
+        <div class="stars">★★★★★</div>
+        <span>— Joy, Cashier</span>
+      </div>
+
+      <div class="review-card">
+        <img src="https://64.media.tumblr.com/718a60b286a2081df03631eb5431c061/fcde14dae28cbee4-6b/s400x600/f5df06f6ee6eb53b53bcb844c8fd733333d8908e.jpg" alt="Nella">
+        <blockquote>
+          “Where good food meets good vibes — tara, kain na!”
+        </blockquote>
+        <div class="stars">★★★★★</div>
+        <span>— Janella, Crew and Owner</span>
+      </div>
+
+      <div class="review-card">
+        <img src="https://64.media.tumblr.com/283daaa082cb97320ded830ce910881c/fcde14dae28cbee4-a0/s400x600/80b594d5a6d9584a0bf8bae49a6f15e1dfde83df.jpg" alt="Missy">
+        <blockquote>
+          “I make sure your experience is as warm as your meal. Laging masaya sa Panyeros!”
+        </blockquote>
+        <div class="stars">★★★★★</div>
+        <span>— Lalay, Customer Happiness</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="info-section reveal">
+    <h2>Become a Panyero!</h2>
+    <p>Want to be part of a passionate team bringing joy through food? We’re always looking for fresh faces and big hearts.</p>
+    <a href="index.html" class="gallery-link">📩 Apply Now</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    &copy; 2025 Panyeros Kusina. All rights reserved.
+  </footer>
+
+  <!-- Scroll Animation -->
+  <script>
+    function revealOnScroll() {
+      const reveals = document.querySelectorAll('.reveal');
+      for (let el of reveals) {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        if (elementTop < windowHeight - 100) {
+          el.classList.add('active');
+        }
+      }
+    }
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story | Panyeros Kusina</title>
+  <link rel="stylesheet" href="blog.css" />
+</head>
+<body>
+       <a href="index.html" class="back-home" title="Return to homepage">← Home</a>
+
+  <!-- Header Section -->
+  <header class="story-header">
+    <div class="overlay"></div>
+    <div class="header-content">
+      <h1>From Heart to Plate</h1>
+      <p>The journey of the Gomez Family and how Panyeros Kusina came to life</p>
+    </div>
+  </header>
+
+  <!-- Blog Content -->
+  <section class="story-content reveal">
+    <img src="https://64.media.tumblr.com/5a47d5a85d680e79cc7659dad2c8def8/1e10e101c0ea050b-ce/s1280x1920/e52c6729b8f2876ccba5afe4b95c12ae0ddff1da.pnj" alt="Gomez Family" class="story-img" />
+    <h2>Rooted in Tradition, Served with Passion</h2>
+    <p>Established in 2024, <i>Panyeros Kusina</i> is a small Filipino restaurant born from a lifelong dream and a passion for authentic cuisine. Our founder, a seasoned chef with experience in five-star hotel kitchens, finally embraced the opportunity to bring his expertise closer to home by opening this family-run eatery. At Panyeros Kusina, every dish tells a story. From rich and hearty Overload Pares to crispy, flavorful hot meals Silogs, our menu reflects the best of Filipino tradition, carefully crafted with a touch of culinary excellence. Beyond the food, our team is truly a family effort—our father leads as head chef, our mother manages the cashier, and the younger generation provides attentive service to every guest. More than just a restaurant, Panyeros Kusina is a place where community and family come together. We take pride in offering not only delicious meals but also a warm and welcoming atmosphere where everyone feels at home.
+
+Visit us and experience the heart of Filipino cuisine, served with love and dedication.</p>
+
+    <img src="https://64.media.tumblr.com/fad033085181db6c52c18080fc6d7c37/bbc31d69919d3308-bd/s1280x1920/7bd9fce5758d56d2338a9722d4a268e1505aff23.jpg" alt="Gomez Family" class="story-img" />
+    <p>Panyeros Kusina may be small in size, but it’s big on flavor and heart. Nestled in the heart of Mabalacat, our humble space brings you the warmth of Filipino home-cooked meals with a cozy, welcoming vibe. Whether you’re dropping by for a quick silog or gathering for comfort food with loved ones, every plate is prepared with care, tradition, and a touch of love — just like family.</p>
+
+      <img src="https://64.media.tumblr.com/33c4e9da958df2e931caf7b55752a6ac/f070f46531a68688-8a/s2048x3072/600e1a32a98203077d317cfdc9f4cafbb934de0a.jpg" alt="Gomez Family" class="story-img" />
+   <p>At Panyeros Kusina, every dish is a celebration of Filipino comfort food. From hearty silog meals to our mouthwatering best-seller — the Overload Pares — we bring you flavors that feel like home. Craving something grilled? Our juicy liempo hits the spot every time. For sharing and gatherings, enjoy our crowd-favorites like Pansit Bihon, sizzling sisig, and many more. Whether you're dining solo or with your barkada, we serve food that’s always hot, generous, and made with love.
+
+</p>
+      <a href="index.html" class="story-link">Explore Panyeros Kusina →</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    &copy; 2025 Panyeros Kusina. All rights reserved.
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    function revealOnScroll() {
+      const reveals = document.querySelectorAll('.reveal');
+      for (let el of reveals) {
+        const windowHeight = window.innerHeight;
+        const elementTop = el.getBoundingClientRect().top;
+        if (elementTop < windowHeight - 100) {
+          el.classList.add('active');
+        }
+      }
+    }
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+  </script>
+</body>
+</html>

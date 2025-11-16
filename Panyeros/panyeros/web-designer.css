@@ -1,0 +1,185 @@
+/* Reset */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+body {
+  font-family: 'Playfair Display', serif;
+  color: #4b3b1b; /* warm dark brown */
+  background-color: #fffaf0;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #6f4e10; /* deep golden brown */
+}
+
+p, address {
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: #5a4b17;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+}
+
+
+/* Main container */
+.designer-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1.5px solid #d9d4ca;
+  border-radius: 20px;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.05);
+  padding: 4rem 5rem;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+/* Profile Section */
+.profile-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3rem;
+}
+
+.photo-container {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 5px solid #c9b77a; /* warm gold-ish border */
+  box-shadow: 
+    0 8px 15px rgba(0, 0, 0, 0.25), /* soft drop shadow */
+    inset 0 0 15px rgba(255, 255, 255, 0.4); /* subtle inner glow for depth */
+  background: #fdf6e3; /* very light cream background behind image */
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.photo-container:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 12px 25px rgba(0, 0, 0, 0.35), 
+    inset 0 0 25px rgba(255, 255, 255, 0.5);
+}
+
+.designer-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.1)); /* tiny subtle shadow */
+  transition: filter 0.3s ease;
+}
+
+.photo-container:hover .designer-photo {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); /* stronger on hover */
+}
+
+
+/* Profile text */
+.profile-content {
+  flex: 1 1 400px;
+  font-family: 'Playfair Display', serif;
+  color: #3c3c3c;
+}
+
+.designer-name {
+  font-family: 'Playfair Display', serif; /* or your chosen elegant font */
+  font-size: 1.4rem;       /* smaller than before but still readable */
+  font-weight: 600;        /* medium bold for elegance */
+  letter-spacing: 0.05em;  /* slight spacing for classy look */
+  color: #6f4e10;          /* deep golden brown */
+  margin-top: 0.2rem;
+}
+
+
+.designer-role {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #6b6656;
+  font-style: normal;
+  letter-spacing: 0.05em;
+}
+
+.designer-intro,
+.designer-bio {
+  max-width: 640px;
+  margin-bottom: 1.6rem;
+  color: #4b4b4b;
+}
+
+.designer-intro em {
+  font-style: italic;
+  color: #bfa868;
+  font-weight: 600;
+}
+
+.designer-bio strong {
+  font-weight: 700;
+  color: #bfa868;
+}
+
+/* Button */
+.btn-secondary {
+  display: inline-block;
+  padding: 0.8rem 2.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #bfa868;
+  border: 2px solid #bfa868;
+  border-radius: 30px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #bfa868;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(191, 168, 104, 0.4);
+  outline: none;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  color: #bfa868;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  margin-top: 3rem;
+  user-select: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .designer-wrapper {
+    flex-direction: column;
+    padding: 3rem 2rem;
+  }
+  .photo-container {
+    margin-bottom: 2rem;
+  }
+  .designer-name {
+    font-size: 2.8rem;
+  }
+  .designer-role {
+    font-size: 1.3rem;
+  }
+}
