@@ -203,12 +203,12 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Feedback - Panyeros sa Kusina</title>
-    <link rel="stylesheet" href="feed.css">
+    <title>Customer Feedback - Panyeros Kusina</title>
+    <link rel="stylesheet" href="invent.css">
     
     <style>
         .filter-bar {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.3);
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -216,13 +216,14 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
             gap: 15px;
             align-items: center;
             flex-wrap: wrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .filter-group {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            flex: 1;
+            min-width: 200px;
         }
         
         .filter-label {
@@ -236,19 +237,20 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
             border: 2px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
-            background: white;
+            background: rgba(255,255,255,0.5);
             cursor: pointer;
+            width: 100%;
         }
         
         .filter-select:focus, .filter-input:focus {
             outline: none;
-            border-color: #D4874B;
+            border-color: #638ECB;
+            background: #fff;
         }
         
         .action-buttons {
             display: flex;
             gap: 10px;
-            margin-left: auto;
             flex-wrap: wrap;
         }
         
@@ -284,12 +286,12 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
         }
         
         .btn-history {
-            background: #6f42c1;
+            background: #638ECB;
             color: white;
         }
         
         .btn-history:hover {
-            background: #5a32a3;
+            background: #4A6FA5;
         }
         
         .stats-bar {
@@ -310,7 +312,7 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
         .stat-value {
             font-size: 32px;
             font-weight: bold;
-            color: #D4874B;
+            color: #638ECB;
             margin-bottom: 5px;
         }
         
@@ -376,12 +378,12 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
         }
         
         .tab-btn:hover {
-            color: #D4874B;
+            color: #638ECB;
         }
         
         .tab-btn.active {
-            color: #D4874B;
-            border-bottom-color: #D4874B;
+            color: #638ECB;
+            border-bottom-color: #638ECB;
         }
         
         .tab-content {
@@ -530,8 +532,7 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
     <div class="main-content">
         <div class="top-bar">
             <h1 class="page-header-title">
-                Customer Feedback
-                <span class="feedback-icon">💬</span>
+                💬 Customer Feedback
             </h1>
             <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button>
         </div>
@@ -860,78 +861,3 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
                 if (data.success) {
                     renderHistory(data.history);
                 } else {
-                    alert('Error loading history: ' + data.message);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
-        }
-        
-        function renderHistory(history) {
-            const tbody = document.getElementById('historyTableBody');
-            
-            if (history.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px; color: #999;">No history records found</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = history.map(record => {
-                const actionDate = new Date(record.action_date).toLocaleString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                const originalDate = new Date(record.original_date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                
-                const actionClass = `action-${record.action_type}`;
-                const actionText = record.action_type.charAt(0).toUpperCase() + record.action_type.slice(1);
-                
-                return `
-                    <tr>
-                        <td>${actionDate}</td>
-                        <td><span class="action-badge ${actionClass}">${actionText}</span></td>
-                        <td><strong>${record.name}</strong></td>
-                        <td>${record.comment}</td>
-                        <td>${'⭐'.repeat(parseInt(record.rating))}</td>
-                        <td>${originalDate}</td>
-                        <td>${record.deleted_by || '-'}</td>
-                        <td>${record.notes || '-'}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-        
-        function printFeedback() {
-            const month = document.getElementById('monthFilter').value;
-            const monthName = new Date(month + '-01').toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long' 
-            });
-            
-            // Update print header
-            document.getElementById('printDate').textContent = `Generated: ${new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            })}`;
-            
-            document.getElementById('printPeriod').textContent = `Feedback Period: ${monthName}`;
-            
-            window.print();
-        }
-        
-        function printHistory() {
-            window.print();
-        }
-    </script>
-</body>
-</html>
-<?php ob_end_flush(); ?>

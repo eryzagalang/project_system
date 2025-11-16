@@ -1,62 +1,100 @@
 <?php
 session_start();
 
-// Database configuration (update with your credentials)
+// Database configuration
 define('DB_HOST', 'localhost');
+define('DB_NAME', 'panyeros');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'panyeros');
 
-// Initialize variables
-$error = '';
-$success = '';
+// Create PDO connection
+try {
+    $pdo = new PDO(
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+        DB_USER,
+        DB_PASS,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]
+    );
+} catch (PDOException $e) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        header('Content-Type: application/json');
+        echo json_encode([
+            "success" => false,
+            "message" => "Database connection failed. Please try again later."
+        ]);
+        exit;
+    }
+    die("Connection failed: " . $e->getMessage());
+}
 
-// Process login form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-    $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'] ?? '';
+// Handle POST request for login
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json');
     
-    // Validation
-    if (empty($email) || empty($password)) {
-        $error = 'Please fill in all fields';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address';
-    } else {
-        try {
-            // Database connection
-            $conn = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $username = filter_var($_POST['username'] ?? '', FILTER_SANITIZE_STRING);
+    $password = $_POST['password'] ?? '';
+
+    // Validate input
+    if (empty($username) || empty($password)) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Please enter both username and password"
+        ]);
+        exit;
+    }
+
+    try {
+        // Query to get user by username
+        $sql = "SELECT * FROM login WHERE username = ? LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Check if user exists
+        if ($user) {
+            // Try password_verify first (for hashed passwords)
+            $passwordMatch = password_verify($password, $user['password']);
             
-            // Prepare and execute query
-            $stmt = $conn->prepare("SELECT id, email, password, name, is_admin FROM users WHERE email = :email AND active = 1");
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            
-            if ($stmt->rowCount() > 0) {
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                // Verify password
-                if (password_verify($password, $user['password'])) {
-                    // Set session variables
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['user_name'] = $user['name'];
-                    $_SESSION['logged_in'] = true;
-                    $_SESSION['is_admin'] = $user['is_admin'];
-                    
-                    // Redirect to dashboard
-                    header('Location: home.php');
-                    exit();
-                } else {
-                    $error = 'Invalid email or password';
-                }
-            } else {
-                $error = 'Invalid email or password';
+            // Fallback to plain text comparison (temporary, for migration)
+            if (!$passwordMatch && trim($password) === trim($user['password'])) {
+                $passwordMatch = true;
             }
-        } catch(PDOException $e) {
-            $error = 'Connection failed. Please try again later.';
-            // Log error: error_log($e->getMessage());
+            
+            if ($passwordMatch) {
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['logged_in'] = true;
+
+                // Return success response
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Login successful!",
+                    "redirect" => "home.php"
+                ]);
+                exit;
+            }
         }
+        
+        // Invalid credentials
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid username or password"
+        ]);
+        exit;
+        
+    } catch(PDOException $e) {
+        echo json_encode([
+            "success" => false,
+            "message" => "An error occurred. Please try again later."
+        ]);
+        error_log("Login error: " . $e->getMessage());
+        exit;
     }
 }
 ?>
@@ -72,329 +110,323 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            display: flex;
+            background: linear-gradient(135deg, #667db4ff 0%, #667db4ff 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        
+
+        .container {
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+        }
+
         .left-section {
             flex: 1;
-            background: #fff;
+            padding: 0;
             display: flex;
             flex-direction: column;
+            justify-content: flex-end;
             align-items: center;
-            justify-content: center;
-            padding: 40px;
             position: relative;
             overflow: hidden;
         }
-        
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 500px;
+
+        .food-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-bottom: 30px;
+            height: 100%;
         }
-        
-        .food-item {
-            position: relative;
-            border-radius: 15px;
-            overflow: hidden;
-            aspect-ratio: 1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .food-item img {
+
+        .food-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
-        .brush-stroke {
-            position: absolute;
-            width: 200px;
-            height: 100px;
-            background: #D4874B;
-            opacity: 0.8;
-            border-radius: 50%;
-            transform: rotate(-20deg);
-        }
-        
-        .brush-1 { top: 10%; right: -50px; }
-        .brush-2 { top: 35%; left: 35%; width: 250px; }
-        .brush-3 { bottom: 30%; right: -30px; width: 180px; }
-        
-        .logo-text {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 48px;
-            color: #8B5A2B;
+
+        .brand-overlay {
+            position: relative;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            padding: 30px;
             text-align: center;
-            font-style: italic;
-            margin-top: 20px;
         }
-        
+
+        .brand-name {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 36px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .tagline {
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
         .right-section {
             flex: 1;
+            padding: 60px 50px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            padding: 40px;
-            background: #fafafa;
         }
-        
-        .brand-logo {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #F5B461;
-            padding: 8px 20px;
-            font-weight: bold;
-            color: #8B5A2B;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .user-icon {
-            width: 120px;
-            height: 120px;
-            background: #D4874B;
-            border-radius: 50%;
+
+        .logo {
+            width: 80px;
+            height: 80px;
             margin: 0 auto 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
-        
-        .user-icon::before {
-            content: '';
-            width: 40px;
-            height: 40px;
-            background: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: 25px;
+
+        .logo img {
+            width: 120%;
+            height: 120%;
+            object-fit: contain;
         }
-        
-        .user-icon::after {
-            content: '';
-            width: 70px;
-            height: 70px;
-            background: #fff;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 10px;
-        }
-        
-        h1 {
+
+        h2 {
             text-align: center;
-            font-size: 48px;
             color: #333;
             margin-bottom: 10px;
-            font-weight: 600;
+            font-size: 28px;
         }
-        
+
         .subtitle {
             text-align: center;
-            color: #666;
-            margin-bottom: 30px;
+            color: #999;
+            margin-bottom: 40px;
             font-size: 14px;
         }
-        
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        
+
+        label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
-            padding: 15px 20px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
-            background: #fff;
             transition: border-color 0.3s;
         }
-        
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+
+        input:focus {
             outline: none;
-            border-color: #D4874B;
+            border-color: #a1887f;
         }
-        
-        .password-wrapper {
-            position: relative;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #999;
-            font-size: 18px;
-        }
-        
-        .forgot-password {
-            text-align: right;
-            margin: 10px 0 20px;
-        }
-        
-        .forgot-password a {
-            color: #666;
-            text-decoration: none;
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
             font-size: 13px;
         }
-        
-        .forgot-password a:hover {
-            color: #D4874B;
+
+        .remember {
+            display: flex;
+            align-items: center;
+            color: #666;
         }
-        
-        .submit-btn {
+
+        .remember input {
+            margin-right: 6px;
+        }
+
+        .forgot-password {
+            color: #a1887f;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
             width: 100%;
-            padding: 15px;
-            background: #D4874B;
-            color: #fff;
+            padding: 14px;
+            background: #353230ff;
+            color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
             transition: background 0.3s;
-            letter-spacing: 2px;
         }
-        
-        .submit-btn:hover {
-            background: #B87439;
+
+        .login-btn:hover {
+            background: #8d6e63;
         }
-        
-        .alert {
-            padding: 12px 20px;
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
+            text-align: center;
         }
-        
-        .alert-error {
-            background: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
         }
-        
-        .alert-success {
-            background: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
-        }
-        
-        @media (max-width: 968px) {
-            body {
+
+        @media (max-width: 768px) {
+            .container {
                 flex-direction: column;
             }
-            
+
             .left-section {
-                min-height: 300px;
+                padding: 40px 20px;
             }
-            
-            .brand-logo {
-                position: static;
-                margin-bottom: 20px;
+
+            .right-section {
+                padding: 40px 30px;
+            }
+
+            .brand-name {
+                font-size: 28px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="left-section">
-        <div class="brush-stroke brush-1"></div>
-        <div class="brush-stroke brush-2"></div>
-        <div class="brush-stroke brush-3"></div>
-        
-        <div class="food-grid">
-            <div class="food-item">
-                <img src="shrimp-dish.jpg" alt="Shrimp Dish">
+    <div class="container">
+        <div class="left-section">
+            <div class="food-image-container">
+                <img src="panyeros.jpg" alt="Panyeros Kusina Food" class="food-image">
             </div>
-            <div class="food-item">
-                <img src="noodles-dish.jpg" alt="Noodles">
-            </div>
-            <div class="food-item">
-                <img src="glazed-meat.jpg" alt="Glazed Meat">
-            </div>
-            <div class="food-item">
-                <img src="pasta-dish.jpg" alt="Pasta">
+            
+            <div class="brand-overlay">
+                <div class="brand-name">Panyeros Kusina</div>
+                <div class="tagline">Authentic Filipino Cuisine</div>
             </div>
         </div>
-        
-        <div class="logo-text">Panyeros Kusina</div>
-    </div>
-    
-    <div class="right-section">
-        <div class="brand-logo">panyeros</div>
-        
-        <div class="login-container">
-            <div class="user-icon"></div>
+
+        <div class="right-section">
+            <div class="logo">
+                <img src="icon.jpg" alt="Login Icon">
+            </div>
             
-            <h1>Login</h1>
-            <p class="subtitle">Log in your account</p>
-            
-            <?php if ($error): ?>
-                <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            
-            <?php if ($success): ?>
-                <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
-            <?php endif; ?>
-            
-            <form method="POST" action="">
+            <h2>Login</h2>
+            <p class="subtitle">Login to your account</p>
+
+            <div id="message"></div>
+
+            <form id="loginForm" method="POST">
                 <div class="form-group">
-                    <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="Email Address" 
-                        value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
-                        required
-                    >
+                    <label for="username">Email/Username</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <div class="password-wrapper">
-                        <input 
-                            type="password" 
-                            name="password" 
-                            id="password"
-                            placeholder="Password" 
-                            required
-                        >
-                        <span class="toggle-password" onclick="togglePassword()">👁</span>
-                    </div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
-                
-                <div class="forgot-password">
-                    <a href="forgot-password.php">Forgot Password?</a>
+
+                <div class="options">
+                    <label class="remember">
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
                 </div>
-                
-                <button type="submit" name="submit" class="submit-btn">SUBMIT</button>
+
+                <button type="submit" class="login-btn">Login Now</button>
             </form>
         </div>
     </div>
-    
+
     <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-        }
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.getElementById('message');
+            const submitBtn = this.querySelector('.login-btn');
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging in...';
+            
+            try {
+                // Send login request to same page
+                const response = await fetch('login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success message
+                    messageDiv.innerHTML = '<div class="success">' + data.message + '</div>';
+                    
+                    // Redirect after 1 second
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                } else {
+                    // Show error message
+                    messageDiv.innerHTML = '<div class="error">' + data.message + '</div>';
+                    
+                    // Re-enable button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Login Now';
+                }
+            } catch (error) {
+                // Handle network or server errors
+                messageDiv.innerHTML = '<div class="error">An error occurred. Please try again.</div>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login Now';
+                console.error('Login error:', error);
+            }
+        });
     </script>
 </body>
 </html>

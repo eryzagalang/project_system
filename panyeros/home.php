@@ -86,9 +86,134 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Panyeros Kusina</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="invent.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Additional styles for home page specific elements */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d2d2d;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #638ECB;
+        }
+
+        .stock-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .stock-item:hover {
+            background: #e9ecef;
+        }
+
+        .stock-item-name {
+            font-weight: 500;
+            color: #2d2d2d;
+        }
+
+        .stock-badge {
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .customer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .customer-item:hover {
+            background: #e9ecef;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: #2d2d2d;
+        }
+
+        .customer-points {
+            background: #638ECB;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feedback-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #638ECB;
+        }
+
+        .feedback-header {
+            margin-bottom: 8px;
+        }
+
+        .customer-name-fb {
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+
+        .feedback-text {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .rating {
+            font-size: 14px;
+        }
+
         .chart-section {
             background: white;
             border-radius: 12px;
@@ -218,6 +343,34 @@ try {
         .insight-icon {
             font-size: 16px;
         }
+
+        .quick-stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .quick-stat-icon {
+            font-size: 24px;
+        }
+
+        .quick-stat-info {
+            flex: 1;
+        }
+
+        .quick-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .quick-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2d2d2d;
+        }
     </style>
 </head>
 <body>
@@ -255,47 +408,28 @@ try {
     
     <div class="main-content">
         <div class="top-bar">
-            <div class="user-info">
-                <span>👋 Welcome, <strong><?php echo $welcome_name; ?></strong></span>
-            </div>
+            <h1 class="page-header-title">
+                🏠 Dashboard
+            </h1>
             <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button>
         </div>
         
         <div class="content-area">
-            <h1 class="page-title">Dashboard</h1>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Inventory Items</div>
-                        <div class="stat-icon">📦</div>
-                    </div>
+            <div class="stats-bar">
+                <div class="stat-box">
                     <div class="stat-value"><?php echo $total_items; ?></div>
-                    <div class="stat-label">Active items in stock</div>
+                    <div class="stat-label">Total Inventory Items</div>
+                    <div class="stat-sublabel">Active items in stock</div>
                 </div>
-                
-                <div class="stat-card alert-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Low Stock Alert</div>
-                        <div class="stat-icon">⚠️</div>
-                    </div>
+                <div class="stat-box alert">
                     <div class="stat-value"><?php echo $low_stock_count; ?></div>
-                    <div class="stat-label">Items need restocking</div>
+                    <div class="stat-label">Low Stock Alert</div>
+                    <div class="stat-sublabel">Items need restocking</div>
                 </div>
-                
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-title">Total Loyalty Points Issued</div>
-                        <div class="stat-icon">⭐</div>
-                    </div>
+                <div class="stat-box">
                     <div class="stat-value"><?php echo number_format($total_points); ?></div>
-                    <div class="quick-stat">
-                        <span class="quick-stat-icon">👥</span>
-                        <div class="quick-stat-info">
-                            <div class="quick-stat-label">Total Customers</div>
-                            <div class="quick-stat-value"><?php echo $customer_count; ?></div>
-                        </div>
-                    </div>
+                    <div class="stat-label">Total Loyalty Points</div>
+                    <div class="stat-sublabel"><?php echo $customer_count; ?> total customers</div>
                 </div>
             </div>
             
@@ -304,7 +438,7 @@ try {
                     <div class="section-title">🔴 Low Stock Items</div>
                     <div class="stock-list">
                         <?php if (empty($low_stock_items)): ?>
-                            <p style="padding: 10px;">No low stock items. Good job!</p>
+                            <p style="padding: 10px; color: #666;">No low stock items. Good job!</p>
                         <?php else: ?>
                             <?php foreach ($low_stock_items as $item): ?>
                                 <div class="stock-item">
@@ -320,7 +454,7 @@ try {
                     <div class="section-title">🏆 Top Loyalty Customers</div>
                     <div class="customer-list">
                         <?php if (empty($top_customers)): ?>
-                            <p style="padding: 10px;">No customer data found.</p>
+                            <p style="padding: 10px; color: #666;">No customer data found.</p>
                         <?php else: ?>
                             <?php $rank = 1; ?>
                             <?php foreach ($top_customers as $customer): ?>
@@ -338,7 +472,7 @@ try {
                 <div class="section-title">💬 Recent Feedback</div>
                 <div class="feedback-list">
                     <?php if (empty($recent_feedback)): ?>
-                        <p style="padding: 10px;">No recent feedback.</p>
+                        <p style="padding: 10px; color: #666;">No recent feedback.</p>
                     <?php else: ?>
                         <?php foreach ($recent_feedback as $feedback): ?>
                             <div class="feedback-item">
